@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MipaReader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.MipaReader" parent="Base.Theme.MipaReader" />
+    <style name="pop_animation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_out</item>
+    </style>
+    <style name="setting_top_animation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/setting_top_in</item>
+        <item name="android:windowExitAnimation">@anim/setting_top_out</item>
+    </style>
+    <style name="dir_pop_animation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dir_slide_in</item>
+        <item name="android:windowExitAnimation">@anim/dir_slide_out</item>
+    </style>
+</resources>
