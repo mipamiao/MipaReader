@@ -16,12 +16,39 @@ public class BookWithSectionsAndBookmarks {
     )
     public List<Section> sections;
 
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
+    }
+
+    public List<Bookmark> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(List<Bookmark> bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+
     @Relation(
             parentColumn = "id",
             entityColumn = "book_id",
             entity = Bookmark.class
     )
     public List<Bookmark> bookmarks;
+
+    public BookWithSectionsAndBookmarks(){}
+
 
 
     public int getTotalSections() {

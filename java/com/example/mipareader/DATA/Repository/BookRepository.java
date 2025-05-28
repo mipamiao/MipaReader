@@ -1,14 +1,25 @@
 package com.example.mipareader.DATA.Repository;
 
 
+import android.os.Message;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.example.mipareader.DATA.Chapter;
 import com.example.mipareader.DATA.Data;
+import com.example.mipareader.DATA.Net.ApiClient;
+import com.example.mipareader.DATA.Net.ApiService;
 import com.example.mipareader.MyApp;
 import com.example.mipareader.Utils.DatabaseExecutor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BookRepository {
 
@@ -95,5 +106,59 @@ public class BookRepository {
             }
         });
 
+    }
+
+    public void uploadToCloud(ArrayList<Data>allBooks){
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        AllBooksForNet  allBooksForNet = new AllBooksForNet();
+        List<BookWithSectionsAndBookmarks> bookAndInfs = allBooks.stream().map(Data::toBookAndInf).collect(Collectors.toList());
+        allBooksForNet.setAllBookData( bookAndInfs);
+        Call<Void> call = apiService.postBooks(allBooksForNet);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //AllBooksForNet allBooksForNet1 = response.body();
+                    Log.i("uploadToCloud","okk");
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("uploadToCloud", "Error: " + errorBody);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("uploadToCloud", "Failure: " + t.getMessage());
+            }
+        });
+    }
+
+    public void downloadFromCloud(int id){
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<AllBooksForNet> call = apiService.getBooks(id);
+        call.enqueue(new Callback<AllBooksForNet>() {
+            @Override
+            public void onResponse(Call<AllBooksForNet> call, Response<AllBooksForNet> response) {
+                if (response.isSuccessful()) {
+                    AllBooksForNet allBooksForNet1 = response.body();
+                    Log.i("downloadFromCloud","okk");
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("downloadFromCloud", "Error: " + errorBody);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<AllBooksForNet> call, Throwable t) {
+                Log.e("downloadFromCloud", "Failure: " + t.getMessage());
+            }
+        });
     }
 }
