@@ -10,6 +10,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,10 +25,10 @@
             android:name="MyFilePicker.File_Picker_Main"
             android:exported="false" />
         <activity
-            android:name=".NovelWindow"
+            android:name=".UI.NovelWindow"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".UI.MainActivity"
             android:exported="true"
             android:configChanges="orientation|keyboard|layoutDirection|screenSize">
             <intent-filter>

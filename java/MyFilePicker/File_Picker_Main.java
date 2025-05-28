@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.mipareader.IndirectClass;
+import com.example.mipareader.Utils.IndirectClass;
 import com.example.mipareader.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 

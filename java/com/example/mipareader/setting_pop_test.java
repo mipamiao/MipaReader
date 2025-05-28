@@ -10,6 +10,11 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
 
+import com.example.mipareader.UI.popwindow.Dir_popwindow;
+import com.example.mipareader.UI.popwindow.FontSize_popwindow;
+import com.example.mipareader.UI.popwindow.FontType_popwindow;
+import com.example.mipareader.Utils.IndirectClass;
+
 public class setting_pop_test {
     public IndirectClass IC;
     public static boolean HaveSettingWindow = false;
@@ -21,7 +26,7 @@ public class setting_pop_test {
             return;
         }
         IC = ic;
-        View Setting_View  = LayoutInflater.from(IC.getContxt()).inflate(R.layout.setting_popwindow,null);
+        View Setting_View  = LayoutInflater.from(IC.getContext()).inflate(R.layout.setting_popwindow,null);
         PopupWindow test = new PopupWindow(Setting_View, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,true);
         window = test;
@@ -29,7 +34,7 @@ public class setting_pop_test {
         test.setFocusable(false);
         test.setAttachedInDecor(true);
         test.setAnimationStyle(R.style.pop_animation);
-        test.showAtLocation(IC.getNovelWindow().tv,Gravity.BOTTOM,0,0);
+        test.showAtLocation(IC.getNovelWindow().getTV(),Gravity.BOTTOM,0,0);
         Setting_View.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
         int bottom = Setting_View.getMeasuredHeight();
         Log.e("TAG", "setting_popwindow: "+ bottom);
@@ -49,7 +54,7 @@ public class setting_pop_test {
         Dir_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("tag", "onClick: " + IC.getNovelWindow().dir.CheapterList.size() );
+                Log.e("tag", "onClick: " + IC.getNovelWindow().getDir().getChapterList().size() );
                 new Dir_popwindow(IC);
                 test.dismiss();
             }
