@@ -23,11 +23,11 @@ public class DatabaseExecutor {
     }
 
     private DatabaseExecutor() {
-        // 创建有界队列
+
         BlockingQueue<Runnable> workQueue =
                 new LinkedBlockingQueue<>(QUEUE_CAPACITY);
 
-        // 创建线程池
+
         this.diskIOExecutor = new ThreadPoolExecutor(
                 CORE_POOL_SIZE,
                 MAX_POOL_SIZE,
@@ -38,7 +38,7 @@ public class DatabaseExecutor {
                 new DatabaseRejectedExecutionHandler() // 自定义拒绝策略
         );
 
-        // 允许回收核心线程
+
         this.diskIOExecutor.allowCoreThreadTimeOut(true);
     }
 
@@ -46,7 +46,7 @@ public class DatabaseExecutor {
         return diskIOExecutor;
     }
 
-    // 自定义线程工厂
+
     private static class DatabaseThreadFactory implements ThreadFactory {
         private final AtomicInteger threadNumber = new AtomicInteger(1);
 
@@ -58,7 +58,7 @@ public class DatabaseExecutor {
         }
     }
 
-    // 自定义拒绝策略
+
     private static class DatabaseRejectedExecutionHandler implements RejectedExecutionHandler {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {

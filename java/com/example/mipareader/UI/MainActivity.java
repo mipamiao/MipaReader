@@ -47,6 +47,7 @@ import com.example.mipareader.UI.adapter.BookShelfAdapter;
 import com.example.mipareader.UI.event.BookTouchAndClick;
 import com.example.mipareader.DATA.Data;
 import com.example.mipareader.DATA.DataSet;
+import com.example.mipareader.Utils.DatabaseExecutor;
 import com.example.mipareader.Utils.IndirectClass;
 import com.example.mipareader.UI.DIYview.MyCircleProgress;
 import com.example.mipareader.R;
@@ -76,13 +77,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitialMe() {
         IC=new IndirectClass(this,MainActivity.this);
-        DS = DataSet.getInstance(IC.getContext().getFilesDir().getPath());
+
 //        DS = new DataSet(IC);
 //        DS.AllBookData.add(new Data()) ;//测试
         But_Index_Map = new HashMap<>();
         PermissInital();
         RegistCallBack();
-        InitialBookshelf();
+        DatabaseExecutor.getInstance().getDiskIOExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                DS = DataSet.getInstance(IC.getContext().getFilesDir().getPath());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InitialBookshelf();
+                    }
+                });
+            }
+        });
+
     }
     public void RegistCallBack(){
         intentActivityResultLauncher =
