@@ -26,7 +26,7 @@ public interface BookDao {
     List<Bookmark> getBookmarksForBook(int bookId);
 
     @Insert
-    void insertBook(Book book);
+    long  insertBook(Book book);
 
     @Update
     void updataBook(Book book);

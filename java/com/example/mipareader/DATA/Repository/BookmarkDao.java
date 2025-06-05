@@ -11,5 +11,5 @@ public interface BookmarkDao {
     @Insert
     void insertBookmark(Bookmark bookmark);
     @Insert
-    void insertBookmarks(List<Bookmark> bookmarks);
+    long [] insertBookmarks(List<Bookmark> bookmarks);
 }

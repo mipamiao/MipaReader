@@ -9,5 +9,5 @@ import java.util.List;
 public interface SectionDao {
 
     @Insert
-    void insertSections(List<Section> sectionList);
+    long [] insertSections(List<Section> sectionList);
 }

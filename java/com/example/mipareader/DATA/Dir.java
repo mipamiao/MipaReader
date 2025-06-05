@@ -74,8 +74,9 @@ public class Dir implements Serializable {
         chapterList.add(new Chapter(0, "开始"));
         progress = 0;
 
-        Thread dirThread = new Thread(this::initialChildThread);
-        dirThread.start();
+        //Thread dirThread = new Thread(this::initialChildThread);
+        //dirThread.start();
+        initialChildThread();
         return true;
     }
     public Dir(List<Section> sections, String filePath, String encodeType){

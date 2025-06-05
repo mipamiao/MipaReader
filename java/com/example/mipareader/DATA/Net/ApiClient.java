@@ -22,7 +22,7 @@ public class ApiClient {
 
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.example.com/")
+                    .baseUrl("https://api.mipa.com/")
                     .client(okHttpClient) // 设置OkHttpClient
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

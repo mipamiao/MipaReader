@@ -9,6 +9,7 @@ import com.example.mipareader.DATA.Repository.BookDao;
 import com.example.mipareader.DATA.Repository.BookRepository;
 import com.example.mipareader.DATA.Repository.BookWithSectionsAndBookmarks;
 import com.example.mipareader.MyApp;
+import com.example.mipareader.Utils.DatabaseExecutor;
 import com.example.mipareader.Utils.IndirectClass;
 
 import java.io.File;
@@ -57,55 +58,28 @@ public class DataSet implements Serializable {
         return DATA_SAVE_PATH;
     }
 
-//    public  boolean save( ) {
-//
-//        Log.e("4545", "Save: " + filePath + File.separator + DATA_SAVE_PATH);
-//        try {
-//            FileOutputStream fos = new FileOutputStream(new File(
-//                    filePath + File.separator + DATA_SAVE_PATH));
-//            ObjectOutputStream outputStream = new ObjectOutputStream(fos);
-//            outputStream.writeObject(this);
-//            outputStream.close();
-//            return true;
-//        } catch (IOException e) {
-//            Log.e("DataSet", "Save failed", e);
-//            return false;
-//        }
-//    }
 
     private void  load() {
-
         allBookData = BookRepository.getInstance().loadAllBook();
-
-//        DataSet dataSet;
-//        Log.e("4545", "Load: " + filePath + File.separator + DATA_SAVE_PATH);
-//        try {
-//            FileInputStream fis = new FileInputStream(new File(
-//                    filePath + File.separator + DATA_SAVE_PATH));
-//            ObjectInputStream inputStream = new ObjectInputStream(fis);
-//            dataSet = (DataSet) inputStream.readObject();
-//            inputStream.close();
-//        } catch (IOException | ClassNotFoundException e) {
-//            Log.e("DataSet", "Load failed", e);
-//            return new DataSet(filePath);
-//        }
-
     }
     public void updateBookExceptDirAndBookmark(int index){
         BookRepository.getInstance().updataBookExceptDirAndBookmark(allBookData.get(index));
     }
-
-
-
     public void addBook(String bookName, String bookPath) {
         Data book = new Data();
         book.setNovelFilePath(bookPath);
         book.setNovelName(bookName);
-        book.startLoad();
-        this.currentBook = book;
-        this.allBookData.add(book);
-        BookRepository.getInstance().addBook(book);
-        moveBookToFirst(book);
+        currentBook = book;
+        allBookData.add(book);
+        DatabaseExecutor.getInstance().getDiskIOExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                book.startLoad();
+                BookRepository.getInstance().addBook(book);
+                moveBookToFirst(book);
+            }
+        });
+
     }
 
     public void moveBookToFirst(Data book) {

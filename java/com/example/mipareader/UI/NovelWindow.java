@@ -52,6 +52,7 @@ import java.io.IOException;
 
 import java.io.RandomAccessFile;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import java.util.HashMap;
@@ -180,20 +181,22 @@ public class NovelWindow extends AppCompatActivity {
         Log.e(TAG, "ShowPage: " + pos );
         DT.setLastReadPos(pos);
         int spaceline = 0;
+        TransResult tr;
+        int remainCount = OnePageRows;
         try {
             RAF.seek(pos);
-            int totalcount = 0;
+            int totalheight = 0;
             String text = "";
             while (true){
                 pos = RAF.getFilePointer();
                 String line = RAF.readLine();
                 if(line == null){
-                    if(totalcount!=0)return text;
+                    if(totalheight!=0)return text;
                     return null;
                 }
                 line = new String(line.getBytes(StandardCharsets.ISO_8859_1),EncodeType);
                 if(isCheapterName(line)){
-                    if(totalcount == 0)SetCheapterName(line);
+                    if(totalheight == 0)SetCheapterName(line);
                     else {
                         RAF.seek(pos);
                         return text;
@@ -203,32 +206,17 @@ public class NovelWindow extends AppCompatActivity {
                     spaceline++;
                     if(spaceline>1)continue;
                 }else spaceline=0;
-                int lineCount = GetLineCount(line);
-                int try_count = totalcount + lineCount;
-                if (try_count > OnePageRows){
+                tr = getLineCount(line, remainCount);
+                text +=  tr.getResultStr();
+                //Log.e(TAG, "GetShowText: " + tr.getResultStr());
+                if(tr.getRestLineCount()==0){
+                    pos = pos + tr.getByteCount() ;
                     RAF.seek(pos);
                     break;
                 }
-
-                totalcount = try_count;
-                text +=  line + "\n";
-
+                remainCount = tr.getRestLineCount();
             }
-            if(totalcount < OnePageRows){
-                pos = RAF.getFilePointer();
-                String line = RAF.readLine();
-                line = new String(line.getBytes(StandardCharsets.ISO_8859_1),EncodeType);
-                for(int i = 1; i <= line.length(); i++){
-                    String sub = line.substring(0 , i);
-                    if(GetLineCount(sub)+totalcount == OnePageRows + 1){
-                        sub = line.substring(0 , i - 1);
-                        pos += sub.getBytes(EncodeType).length;
-                        RAF.seek(pos);
-                        text +=  sub ;
-                        break;
-                    }
-                }
-            }
+            Log.e(TAG, "GetShowText: " + totalheight + ":"  + tv.getHeight() + ":" + tr.getRestStr());
             return text;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -244,17 +232,21 @@ public class NovelWindow extends AppCompatActivity {
         tv_pre.setLineSpacing(lineSpacingExtra,1.0f);
         int one_col_height = (int) Math.ceil( size1 * (1 + tv_font_extra_space));
         Log.e("lishanweilai", "UpdataOnePageRows: "+one_col_height+" extra" +tv.getLineSpacingExtra() + " hangjianju:" + tv.getLineSpacingMultiplier());
-        OnePageRows = (int)(GetTVHieght()/one_col_height);
+        OnePageRows = (int)(GetTVHieght()/tv.getLineHeight())-2;
         Log.e(TAG, "UpdataOnePageRows: " + OnePageRows );
+        Log.e(TAG,"UpdataOnePageRows" +   ":" + tv.getHeight());
+        Log.e(TAG,"UpdataOnePageRows" + tv.getHeight()/tv.getLineHeight()+ ":" + one_col_height);
     }
 
-    public int GetLineCount(String text){
-        TextPaint textPaint = tv.getPaint();
-        int textViewWidth = GetTVWidth() - tv.getPaddingEnd() - tv.getPaddingStart();
-        StaticLayout staticLayout = new StaticLayout(text+".", textPaint, textViewWidth,
-                Layout.Alignment.ALIGN_NORMAL, tv.getLineSpacingMultiplier(), tv.getLineSpacingExtra(), false);
-        return  staticLayout.getLineCount();
+    public TransResult getLineCount(String text, int remainLineCount){
+        float maxWidth = tv.getWidth() - tv.getPaddingStart() - tv.getPaddingEnd();
+        try {
+            return transToShow(text, remainLineCount, maxWidth);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
+
     public void GetTvHeight(View view) {
         Log.e(TAG, "GetTvHeight:  print tv hieght " + tv.getHeight() + "lineheight "+tv.getLineHeight());
     }
@@ -504,5 +496,69 @@ public class NovelWindow extends AppCompatActivity {
     }
     public Map<String , Typeface> getFontMap(){
         return FontMap;
+    }
+    public TransResult transToShow(String str, int maxLineCount, float maxWidth) throws UnsupportedEncodingException {
+        str = str.replaceAll("\r\n","").replaceAll("\n","");
+        String rStr = "";
+        int byteCount = str.getBytes(EncodeType).length;
+        while(str.length()>0&&maxLineCount>0){
+            int charCount = (int)tv.getPaint().breakText(str, true, maxWidth, null);
+            charCount = Math.min(charCount, str.length());
+            rStr+=str.substring(0,charCount)+"\n";
+            str = str.substring(charCount);
+            maxLineCount--;
+        }
+        TransResult tr  = new TransResult(rStr, str, maxLineCount);
+        tr.setByteCount(byteCount - str.getBytes(EncodeType).length);
+        return tr;
+    }
+    private class TransResult{
+
+        public TransResult(String resultStr, String restStr, int restLineCount){
+            this.resultStr = resultStr;
+            this.restStr = restStr;
+            this.restLineCount = restLineCount;
+        }
+
+        public void setByteCount(int byteCount) {
+            this.byteCount = byteCount;
+        }
+
+        private String resultStr;
+        private String restStr;
+
+        public int getByteCount() {
+            return byteCount;
+        }
+
+        private int byteCount;
+
+        private int restLineCount;
+
+        public String getResultStr() {
+            return resultStr;
+        }
+
+        public void setResultStr(String resultStr) {
+            this.resultStr = resultStr;
+        }
+
+        public String getRestStr() {
+            return restStr;
+        }
+
+        public void setRestStr(String restStr) {
+            this.restStr = restStr;
+        }
+
+        public int getRestLineCount() {
+            return restLineCount;
+        }
+
+        public void setRestLineCount(int restLineCount) {
+            this.restLineCount = restLineCount;
+        }
+
+
     }
 }

@@ -6,6 +6,7 @@ import androidx.room.Room;
 
 import com.example.mipareader.DATA.DataSet;
 import com.example.mipareader.DATA.Repository.AppDatabase;
+import com.facebook.stetho.Stetho;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -29,6 +30,7 @@ public class MyApp extends Application {
                 .build();
 
         instance  = this;
+        Stetho.initializeWithDefaults(this);
     }
 
     public AppDatabase getDatabase() {
