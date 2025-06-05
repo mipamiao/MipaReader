@@ -196,7 +196,7 @@ public class NovelWindow extends AppCompatActivity {
                 }
                 line = new String(line.getBytes(StandardCharsets.ISO_8859_1),EncodeType);
                 if(isCheapterName(line)){
-                    if(totalheight == 0)SetCheapterName(line);
+                    if(remainCount == OnePageRows)SetCheapterName(line);
                     else {
                         RAF.seek(pos);
                         return text;

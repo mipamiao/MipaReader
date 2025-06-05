@@ -1,7 +1,9 @@
 package com.example.mipareader.DATA;
 
+import com.example.mipareader.DATA.File.NovelContent;
 import com.example.mipareader.DATA.Repository.Section;
 import com.example.mipareader.Utils.IndirectClass;
+import com.example.mipareader.Utils.Paragraph;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,19 +90,20 @@ public class Dir implements Serializable {
     }
 
     private void initialChildThread() {
-        try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                FileChannel channel = FileChannel.open(Paths.get(filePath), StandardOpenOption.READ);
-                initialDirByFileChannel(channel);
-                channel.close();
-            } else {
-                FileInputStream fis = new FileInputStream(filePath);
-                initialDirByInputStream(fis);
-                fis.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        initialDirByMultThread();
+//        try {
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                FileChannel channel = FileChannel.open(Paths.get(filePath), StandardOpenOption.READ);
+//                initialDirByFileChannel(channel);
+//                channel.close();
+//            } else {
+//                FileInputStream fis = new FileInputStream(filePath);
+//                initialDirByInputStream(fis);
+//                fis.close();
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void initialDirByFileChannel(FileChannel channel) throws IOException {
@@ -121,6 +124,25 @@ public class Dir implements Serializable {
             progress = channel.position() * 1.0f / channel.size();
         }
         progress = 1;
+    }
+    private void initialDirByMultThread(){
+        NovelContent nc = new NovelContent(filePath,0, encodeType);
+        nc.startFillQue();
+        while(true){
+            try {
+                Paragraph paragraph = nc.getParagraph();
+                if(paragraph.getContent().equals("\n\n\n"))break;
+                progress = (float) paragraph.getPos() /(1.0f*nc.getFileSize());
+                if (Chapter.isChapter(paragraph.getContent())) {
+                    chapterList.add(new Chapter(paragraph.getPos(), paragraph.getContent()));
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        progress = 1.0f;
+
     }
 
     private void initialDirByInputStream(FileInputStream fis) throws IOException {
