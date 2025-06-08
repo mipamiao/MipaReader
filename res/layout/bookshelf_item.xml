@@ -34,4 +34,10 @@
         android:onClick="OpenChangeName"
         android:text="改名">
     </Button>
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:text="上传">
+    </Button>
 </LinearLayout>

@@ -11,17 +11,29 @@ import com.example.mipareader.DATA.Net.ApiClient;
 import com.example.mipareader.DATA.Net.ApiService;
 import com.example.mipareader.MyApp;
 import com.example.mipareader.Utils.DatabaseExecutor;
+import com.example.mipareader.Utils.FileUtils;
+import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Multipart;
 
 public class BookRepository {
+
+    public static  final String TAG = "BookRepository";
 
     private BookRepository(){};
 
@@ -53,7 +65,6 @@ public class BookRepository {
     public void addBook(Data data){
         AppDatabase db = MyApp.getInstance().getDatabase();
         BookDao bookDao = db.bookDao();
-
         db.runInTransaction(new Runnable() {
             @Override
             public void run() {
@@ -155,5 +166,99 @@ public class BookRepository {
                 Log.e("downloadFromCloud", "Failure: " + t.getMessage());
             }
         });
+    }
+
+    public void uploadBookFile(Data book,String OnlyCode){
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+       MultipartBody.Part part = FileUtils.createFilePart(new File(book.getNovelFilePath()), "NovelFile");
+        RequestBody code = RequestBody.create(
+                OnlyCode,
+                okhttp3.MediaType.parse("text/plain")
+        );
+        Call<ResponseBody> call = apiService.uploadFile(part, code);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    System.out.println("Upload success!");
+                } else {
+                    System.out.println("Upload error: " + response.errorBody());
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                System.out.println("Upload failed: " + t.getMessage());
+            }
+        });
+    }
+    public boolean downloadBookFile(String onlyCode, String savePath){
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseBody> call = apiService.downloadFile(onlyCode);
+
+        try {
+            // 同步执行请求
+            Response<ResponseBody> response = call.execute();
+
+            if (response.isSuccessful()) {
+                File file = new File(savePath);
+                File parent = file.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
+                }
+                InputStream inputStream = response.body().byteStream();
+                FileOutputStream outputStream = new FileOutputStream(file);
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.close();
+                inputStream.close();
+                System.out.println("File saved to: " + savePath);
+                return true;
+            } else {
+                System.out.println("downloadBookFile error: " + response.code());
+                return false;
+            }
+        } catch (IOException e) {
+            System.out.println("downloadBookFile failed: " + e.getMessage());
+            return false;
+        }
+    }
+    public void uploadBookInf(Data book, String OnlyCode){
+        book.setOnlyCode(OnlyCode);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseBody> call = apiService.uploadInf(book);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "onResponse: uploadBookInf" );
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "onFailure: uploadBookInf" );
+            }
+        });
+    }
+    public Data downloadInf(String OnlyCode){
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<Data> call = apiService.downloadInf(OnlyCode);
+        Data book = null;
+        try {
+            Response<Data> response = call.execute();
+            if (response.isSuccessful()) {
+                book = response.body();
+                return book;
+            } else {
+                Log.e(TAG, "downloadInf:  Wroooooooooooong");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return book;
     }
 }

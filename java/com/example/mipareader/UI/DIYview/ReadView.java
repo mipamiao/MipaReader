@@ -39,7 +39,7 @@ public class ReadView  extends View {
 
     public void setParagraph(ArrayList<String> paragraph) {
         this.paragraph = paragraph;
-        invalidate(); // 触发重绘
+        invalidate();
     }
 
     public Typeface getFont() {

@@ -14,6 +14,7 @@ import com.ibm.icu.text.CharsetMatch;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class Data implements Serializable {
@@ -30,6 +31,26 @@ public class Data implements Serializable {
     private String encodeType;
     private float readTimeMinutes;
     private float readProgress;
+
+    private Long lastOpenDate;
+
+    private String OnlyCode;
+
+    public String getOnlyCode() {
+        return OnlyCode;
+    }
+
+    public void setOnlyCode(String onlyCode) {
+        OnlyCode = onlyCode;
+    }
+
+    public Long getLastOpenDate() {
+        return lastOpenDate;
+    }
+
+    public void setLastOpenDate(Long lastOpenDate) {
+        this.lastOpenDate = lastOpenDate;
+    }
 
     public Data() {
         this.novelName = "测试";

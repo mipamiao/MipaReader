@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.BatteryManager;
@@ -82,6 +83,8 @@ public class NovelWindow extends AppCompatActivity implements NovelContract.View
                 presenter.loadAndShow();
                 return true;}
         });
+//        tv.setBackgroundColor(Color.RED);
+//        tv_pre.setBackgroundColor(Color.GREEN);
     }
     public void toTop(LinearLayout tv1,LinearLayout tv2,LinearLayout tv3){
         ViewCompat.setZ(tv1 , 2);

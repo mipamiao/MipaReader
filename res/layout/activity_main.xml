@@ -19,6 +19,19 @@
         android:src="@drawable/main_importbook"
         android:layout_width="60dp"
         android:layout_height="60dp"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        />
+
+    <ImageView
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:onClick="downloadBook"
+        android:src="@drawable/download"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
 </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookshelf"

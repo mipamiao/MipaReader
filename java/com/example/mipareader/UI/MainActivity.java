@@ -32,16 +32,20 @@ import android.Manifest;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.EditText;
 import android.widget.PopupWindow;
 
 import android.widget.Toast;
 
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
 
+import com.example.mipareader.DATA.Repository.BookRepository;
+import com.example.mipareader.MyApp;
 import com.example.mipareader.UI.adapter.BookShelfAdapter;
 import com.example.mipareader.UI.event.BookTouchAndClick;
 import com.example.mipareader.DATA.Data;
@@ -94,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
     }
     public void RegistCallBack(){
         intentActivityResultLauncher =
@@ -289,6 +292,48 @@ public class MainActivity extends AppCompatActivity {
                     PermissionChecker.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) );
         }
         filePickerLauncher.launch(new Intent(MainActivity.this, File_Picker_Main.class));
+    }
+
+    public void downloadBook(View view){
+        View downLoadPopView = LayoutInflater.from(MyApp.getInstance().getApplicationContext()).inflate(R.layout.upload_download_popwindow,null);
+        EditText et = downLoadPopView.findViewById(R.id.only_code_et);
+        PopupWindow downLoadPop = new PopupWindow(downLoadPopView , ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,true);
+        downLoadPop.setAnimationStyle(R.style.pop_animation);
+        downLoadPop.showAtLocation(BookShelf, Gravity.CENTER,0,0);
+        downLoadPopView.findViewById(R.id.yes).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String onlyCode = String.valueOf(et.getText());
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        File exFile = Environment.getExternalStorageDirectory();
+                        Data book = BookRepository.getInstance().downloadInf(onlyCode);
+                        BookRepository.getInstance().downloadBookFile(onlyCode,exFile.getPath() + "/" + book.getNovelName());
+                        book.setNovelFilePath(exFile.getPath() + "/" + book.getNovelName());
+                        DatabaseExecutor.getInstance().getDiskIOExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                BookRepository.getInstance().addBook(book);
+                                DS.getAllBookData().add(book);
+                                RecyclerView rv = findViewById(R.id.bookshelf);
+                                rv.getAdapter().notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+                thread.start();
+
+                downLoadPop.dismiss();
+            }
+        });
+        downLoadPopView.findViewById(R.id.no).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downLoadPop.dismiss();
+            }
+        });
     }
 
 

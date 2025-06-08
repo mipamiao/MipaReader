@@ -23,7 +23,7 @@ public class ApiClient {
 
             retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.mipa.com/")
-                    .client(okHttpClient) // 设置OkHttpClient
+                    .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

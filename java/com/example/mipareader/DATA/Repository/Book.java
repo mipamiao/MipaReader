@@ -59,7 +59,7 @@ public class Book implements Serializable {
 
     public Book() {
         // 初始化默认值
-        this.fontSize = 14.0f;
+        this.fontSize = 48.0f;
         this.readProgress = 0.0f;
         this.readTimeMinutes = 0.0f;
     }

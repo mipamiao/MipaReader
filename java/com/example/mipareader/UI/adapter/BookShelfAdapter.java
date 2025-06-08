@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mipareader.UI.event.Book_OP;
 import com.example.mipareader.DATA.Data;
+import com.example.mipareader.UI.popwindow.UploadBook_popwindow;
 import com.example.mipareader.Utils.IndirectClass;
 import com.example.mipareader.R;
 import com.example.mipareader.UI.popwindow.ChangeBookName_popwindow;
@@ -66,7 +67,7 @@ public class BookShelfAdapter extends RecyclerView.Adapter<BookShelfAdapter.View
         TextView textView;
         ImageView img ;
         ImageView but;
-        Button changenamebut;
+        Button changenamebut, uploadbut;
         public LinearLayout linear;
         Book_OP clicklistener;
         public ViewHolder(@NonNull View itemView , Book_OP listener,IndirectClass IC)  {
@@ -75,6 +76,7 @@ public class BookShelfAdapter extends RecyclerView.Adapter<BookShelfAdapter.View
             img = itemView.findViewById(R.id.NovelImg);
             but = itemView.findViewById(R.id.del_but);
             changenamebut  = (Button) itemView.findViewById(R.id.changename);
+            uploadbut = (Button)itemView.findViewById(R.id.upload);
             linear = itemView.findViewById(R.id.ItemLinear);
             clicklistener = listener;
             itemView.setOnTouchListener(new View.OnTouchListener() {
@@ -120,9 +122,15 @@ public class BookShelfAdapter extends RecyclerView.Adapter<BookShelfAdapter.View
                     new ChangeBookName_popwindow(IC,getAdapterPosition());
                 }
             });
+            uploadbut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new UploadBook_popwindow(IC, getAdapterPosition());
+                }
+            });
         }
         public int GetItemWidth(){
-            return  img.getWidth()+but.getWidth()+textView.getWidth()+changenamebut.getWidth();
+            return  img.getWidth()+but.getWidth()+textView.getWidth()+changenamebut.getWidth()+uploadbut.getWidth();
         }
     }
 }
