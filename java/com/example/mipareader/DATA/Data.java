@@ -20,6 +20,7 @@ public class Data implements Serializable {
     private int id;
     private long lastReadPos;
     private String lastReadChapterName;
+
     private String novelFilePath;
     private String novelName;
     private String fontType;

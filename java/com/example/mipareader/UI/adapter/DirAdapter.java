@@ -21,7 +21,7 @@ public class DirAdapter extends RecyclerView.Adapter<DirAdapter.ViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter{
     private final ArrayList<Chapter> ChapterList ;
     OnDirItemClickListener clickListener ;
-    public DirAdapter(ArrayList<Chapter> ac , IndirectClass ic){
+    public DirAdapter(ArrayList<Chapter> ac ){
         this.ChapterList = ac;
     }
     public Chapter getItem(int index){

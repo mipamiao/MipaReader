@@ -34,7 +34,6 @@ import android.widget.Button;
 
 import android.widget.PopupWindow;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -209,8 +208,8 @@ public class MainActivity extends AppCompatActivity {
         }
         now_book_index = index;
         now_book = DS.getAllBookData().get(index);
-        Intent switchIntent = new Intent(MainActivity.this,NovelWindow.class);
-        switchIntent.putExtra("Index",index);
+        Intent switchIntent = new Intent(MainActivity.this, NovelWindow.class);
+        switchIntent.putExtra("Index",DS.getAllBookData().get(index).getId());
         //switchIntent.putExtra("NovelData", DS.AllBookData.get(index));
         //switchIntent.putExtra("AllNovelData",DS);
         intentActivityResultLauncher.launch(switchIntent);

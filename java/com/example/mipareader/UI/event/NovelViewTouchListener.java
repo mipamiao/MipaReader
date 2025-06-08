@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.mipareader.UI.popwindow.My_PopupWindow;
+
 public class NovelViewTouchListener implements View.OnTouchListener {
 
     private final OnTouchActionListener listener;
@@ -18,6 +20,7 @@ public class NovelViewTouchListener implements View.OnTouchListener {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        if(My_PopupWindow.HavePopup()){My_PopupWindow.ClosePopup();return true;}
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 onemove = true;

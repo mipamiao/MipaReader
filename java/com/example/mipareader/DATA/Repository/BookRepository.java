@@ -45,6 +45,11 @@ public class BookRepository {
                 .map(Data::fromBookAndInf)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
+    public Data loadBook(int bookId){
+        AppDatabase db = MyApp.getInstance().getDatabase();
+        BookDao dao = db.bookDao();
+        return Data.fromBookAndInf(dao.getBookWithDetails(bookId));
+    }
     public void addBook(Data data){
         AppDatabase db = MyApp.getInstance().getDatabase();
         BookDao bookDao = db.bookDao();
@@ -96,7 +101,6 @@ public class BookRepository {
                 db.bookDao().updataBook(Data.toBook(data));
             }
         });
-
     }
 
     public void uploadToCloud(ArrayList<Data>allBooks){

@@ -203,24 +203,27 @@ public class Dir implements Serializable {
         return progress;
     }
 
-    public int getIndex(long pos) {
-        return halfSearch(0, chapterList.size() - 1, pos);
+    public int getIndexLess(long pos) {
+        int l = 0, r = chapterList.size() - 1, R = -1;
+        while(l<=r){
+            int mid = l + ((r - l)>>1);
+            if(chapterList.get(mid).getPosition()<pos){
+                R = mid;l = mid + 1;
+            }else r = mid - 1;
+        }
+        return R;
+    }
+    public int getIndexLessEqual(long pos) {
+        int l = 0, r = chapterList.size() - 1, R = -1;
+        while(l<=r){
+            int mid = l + ((r - l)>>1);
+            if(chapterList.get(mid).getPosition()<=pos){
+                R = mid;l = mid + 1;
+            }else r = mid - 1;
+        }
+        return R;
     }
 
-    private int halfSearch(int low, int high, long pos) {
-        int mid = (low + high) / 2;
-        int r = isOk(mid, pos);
-        if (r == 0) return mid;
-        else if (r == 1) return halfSearch(mid + 1, high, pos);
-        else return halfSearch(low, mid - 1, pos);
-    }
-
-    private int isOk(int index, long pos) {
-        if (index == chapterList.size() - 1) return 0;
-        else if (chapterList.get(index).getPosition() <= pos && chapterList.get(index + 1).getPosition() > pos) return 0;
-        else if (chapterList.get(index).getPosition() < pos) return 1;
-        else return -1;
-    }
     public static List<Section> toSections(Dir dir){
         return dir.getChapterList().stream().map(Chapter::toSection).collect(Collectors.toList());
     }

@@ -48,7 +48,7 @@ public class NovelContent {
             }
             // 内存映射文件
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, lastReadPos, mapSize);
-            lastReadPos += mapSize;
+
             int start = 0;
             int end = -1; // 换行符结束位置（不包含）
 
@@ -74,8 +74,8 @@ public class NovelContent {
                         byte[] lineBytes = new byte[end - start];
                         buffer.position(start);
                         buffer.get(lineBytes);
-                        bytes.addBytes(lineBytes);
                         if(start == 0){
+                            bytes.addBytes(lineBytes);
                             que.put(new Paragraph(lastReadPos + start, new String(bytes.getBytes(),0,bytes.getSize(), charset)));
                             bytes.clear();
                         }else que.put(new Paragraph(lastReadPos + start, new String(lineBytes,charset)));
@@ -85,8 +85,12 @@ public class NovelContent {
                     isEnd = false;
                 }
             }
+            lastReadPos += mapSize;
             if (end == -1) {
-                bytes.addBytes(new byte[mapSize - start]);
+                byte[] lineBytes = new byte[mapSize - start];
+                buffer.position(start);
+                buffer.get(lineBytes);
+                bytes.addBytes(lineBytes);
             }
         } catch (IOException | InterruptedException ex) {
             throw new RuntimeException(ex);

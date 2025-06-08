@@ -11,27 +11,26 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import com.example.mipareader.Utils.IndirectClass;
+import com.example.mipareader.MyApp;
+import com.example.mipareader.UI.NovelWindow;
 import com.example.mipareader.R;
 
 
 public class setting_popwindow {
-    public IndirectClass IC;
 
-    public setting_popwindow(IndirectClass ic){
+    public setting_popwindow(NovelWindow novelWindow){
 
-        IC = ic;
-        View Setting_View  = LayoutInflater.from(IC.getContext()).inflate(R.layout.setting_popwindow,null);
+        View Setting_View  = LayoutInflater.from(MyApp.getInstance().getApplicationContext()).inflate(R.layout.setting_popwindow,null);
         My_PopupWindow setting_window = new My_PopupWindow(Setting_View ,ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,false);
         setting_window.setAnimationStyle(R.style.pop_animation);
-        setting_window.showAtLocation(IC.getNovelWindow().getTV(),Gravity.BOTTOM,0,0);
+        setting_window.showAtLocation(novelWindow.getTV(),Gravity.BOTTOM,0,0);
         ImageView Dir_but = Setting_View.findViewById(R.id.Dir_img);
         Dir_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("tag", "onClick: " + IC.getNovelWindow().getDir().getChapterList().size());
-                new Dir_popwindow(IC);
+                Log.e("tag", "onClick: ");
+                new Dir_popwindow(novelWindow);
             }
         });
 
@@ -39,7 +38,7 @@ public class setting_popwindow {
         FontSize_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new FontSize_popwindow(IC);
+                new FontSize_popwindow(novelWindow);
             }
         });
 
@@ -47,34 +46,34 @@ public class setting_popwindow {
         FontType_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new FontType_popwindow(IC);
+                new FontType_popwindow(novelWindow);
             }
         });
         ImageView Bookmark_but = Setting_View.findViewById(R.id.Bookmark);
         Bookmark_but.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {new Bookmark_popwindow(IC); }
+            public void onClick(View v) {new Bookmark_popwindow(novelWindow); }
         });
 
-        View top_view = LayoutInflater.from(IC.getContext()).inflate(R.layout.setting_popupwindow_top,null);
+        View top_view = LayoutInflater.from(MyApp.getInstance().getApplicationContext()).inflate(R.layout.setting_popupwindow_top,null);
         PopupWindow top_popup = new PopupWindow(top_view ,ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,false);
         setting_window.AddPopup(top_popup);
         top_popup.setAnimationStyle(R.style.setting_top_animation);
-        top_popup.showAtLocation(IC.getNovelWindow().getTV(),Gravity.TOP,0,0);
+        top_popup.showAtLocation(novelWindow.getTV(),Gravity.TOP,0,0);
         ImageView back_but = top_view.findViewById(R.id.setting_return);
         back_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ic.getNovelWindow().onBackPressed();
+                novelWindow.onBackPressed();
             }
         });
         ImageView add_bookmark_but = top_view.findViewById(R.id.setting_addbookmark);
         add_bookmark_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ic.getNovelWindow().AddBookmark();
-                Toast.makeText(ic.getContext(),"ok", Toast.LENGTH_LONG).show();
+               novelWindow.getPresenter().addBookmark();
+                Toast.makeText(MyApp.getInstance().getApplicationContext(),"ok", Toast.LENGTH_LONG).show();
             }
         });
     }
